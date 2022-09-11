@@ -14,6 +14,7 @@ let cameraOff = false;
 let roomName;
 let myPeerConnection;
 let myDataChannel;
+let myNickname;
 
 async function getCameras() {
   try {
@@ -61,10 +62,12 @@ function handleMuteClick() {
     .getAudioTracks()
     .forEach((track) => (track.enabled = !track.enabled));
   if (!muted) {
-    muteBtn.innerText = "Unmute";
+    muteBtn.classList.remove("on");
+    muteBtn.classList.add("off");
     muted = true;
   } else {
-    muteBtn.innerText = "Mute";
+    muteBtn.classList.remove("off");
+    muteBtn.classList.add("on");
     muted = false;
   }
 }
@@ -73,10 +76,12 @@ function handleCameraClick() {
     .getVideoTracks()
     .forEach((track) => (track.enabled = !track.enabled));
   if (cameraOff) {
-    cameraBtn.innerText = "Turn Camera Off";
+    cameraBtn.classList.remove("off");
+    cameraBtn.classList.add("on");
     cameraOff = false;
   } else {
-    cameraBtn.innerText = "Turn Camera On";
+    cameraBtn.classList.remove("on");
+    cameraBtn.classList.add("off");
     cameraOff = true;
   }
 }
@@ -104,6 +109,8 @@ const welcomeForm = welcome.querySelector("form");
 async function initCall() {
   welcome.hidden = true;
   call.hidden = false;
+  const h3 = call.querySelector("h3");
+  h3.innerText = `Room [${roomName}]`;
   await getMedia();
   makeConnection();
 }
@@ -111,46 +118,114 @@ async function initCall() {
 async function handleWelcomeSubmit(event) {
   event.preventDefault();
   const input = welcomeForm.querySelector("input");
+  roomName = input.value;
   await initCall();
   socket.emit("join_room", input.value);
-  roomName = input.value;
   input.value = "";
+}
+
+async function handleRoomnameClick(event) {
+  event.preventDefault();
+  console.log(event);
+  roomName = event.srcElement.id;
+  await initCall();
+  socket.emit("join_room", roomName);
 }
 
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
+// Chat Code
+
+const chat = document.getElementById("chat");
+const nicknameForm = chat.querySelector("#nickname");
+const msgForm = chat.querySelector("#msg");
+
+function addMessage(msg) {
+  const ul = chat.querySelector("ul");
+  const li = document.createElement("li");
+  li.innerText = msg;
+  ul.appendChild(li);
+}
+
+function handleNicknameSubmit(event) {
+  event.preventDefault();
+  const input = nicknameForm.querySelector("input");
+  myNickname = input.value;
+  socket.emit("nickname", myNickname);
+}
+
+function handleMessageSubmit(event) {
+  event.preventDefault();
+  const input = msgForm.querySelector("input");
+  const value = input.value;
+  myDataChannel.send(`${myNickname}: ${value}`);
+  addMessage(`You: ${value}`);
+  input.value = "";
+}
+
+msgForm.addEventListener("submit", handleMessageSubmit);
+nicknameForm.addEventListener("submit", handleNicknameSubmit);
+
 // Socket Code
 
-socket.on("welcome", async () => {
+socket.on("welcome", async (user) => {
+  addMessage(`${user} join the room [${roomName}]!`);
   myDataChannel = myPeerConnection.createDataChannel("chat");
-  myDataChannel.addEventListener("message", console.log);
+  myDataChannel.addEventListener("message", (event) => {
+    addMessage(event.data);
+  });
   const offer = await myPeerConnection.createOffer();
   myPeerConnection.setLocalDescription(offer);
-  console.log("sent the offer");
+  // console.log("sent the offer");
   socket.emit("offer", offer, roomName);
 });
 
 socket.on("offer", async (offer) => {
   myPeerConnection.addEventListener("datachannel", (event) => {
     myDataChannel = event.channel;
-    myDataChannel.addEventListener("message", console.log);
+    myDataChannel.addEventListener("message", (event) => {
+      addMessage(event.data);
+    });
   });
-  console.log("received the offer");
+  // console.log("received the offer");
   myPeerConnection.setRemoteDescription(offer);
   const answer = await myPeerConnection.createAnswer();
   myPeerConnection.setLocalDescription(answer);
   socket.emit("answer", answer, roomName);
-  console.log("sent the answer");
+  // console.log("sent the answer");
 });
 
 socket.on("answer", (answer) => {
-  console.log("received the answer");
+  // console.log("received the answer");
   myPeerConnection.setRemoteDescription(answer);
 });
 
 socket.on("ice", (ice) => {
-  console.log("received candidate");
+  // console.log("received candidate");
   myPeerConnection.addIceCandidate(ice);
+});
+
+socket.on("room_change", (roomLists) => {
+  // console.log(roomLists);
+  const roomNames = welcome.querySelector("ul");
+  roomNames.innerHTML = "";
+  roomLists.forEach((room) => {
+    const li = document.createElement("li");
+    const currentRooms = document.createElement("span");
+    const enter = document.createElement("button");
+    enter.innerText = "Enter";
+    enter.id = room;
+    currentRooms.innerText = room;
+    currentRooms.id = room;
+    enter.addEventListener("click", handleRoomnameClick);
+    li.appendChild(currentRooms);
+    li.appendChild(enter);
+    roomNames.appendChild(li);
+  });
+});
+
+socket.on("bye", (user) => {
+  addMessage(`${user} left the room [${roomName}]...`);
 });
 
 // RTC Code
@@ -177,7 +252,7 @@ function makeConnection() {
 }
 
 function handleIce(data) {
-  console.log("send candidate");
+  // console.log("send candidate");
   socket.emit("ice", data.candidate, roomName);
 }
 

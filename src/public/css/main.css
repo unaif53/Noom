@@ -1,0 +1,186 @@
+body {
+  background-color: blanchedalmond;
+}
+
+h1 {
+  position: fixed;
+  top: 2%;
+  width: 100%;
+  height: 10%;
+  text-align: center;
+  font-size: 40px;
+}
+
+#roomList,
+#myStream {
+  position: fixed;
+  top: 20%;
+  left: 10%;
+  width: 35%;
+  height: 65%;
+  border: 2px inset black;
+}
+
+#roomList {
+  font-size: 20px;
+}
+
+#welcome button {
+  font-size: 15px;
+  margin-top: 5px;
+  margin-left: 15px;
+  background: none;
+}
+
+#welcome button:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: background-color 0.2s ease-in-out;
+}
+
+#welcome form,
+#myStream {
+  text-align: center;
+}
+
+#welcome form input {
+  margin-top: 30%;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 3px solid black;
+  font-size: 20px;
+}
+
+#welcome form input:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: background-color 0.2s ease-in-out;
+}
+
+h3 {
+  text-align: center;
+  font-size: 25px;
+}
+
+#roomList li {
+  list-style: none;
+  width: 75%;
+  border-bottom: 2px inset gray;
+  margin-bottom: 4px;
+}
+
+#roomList button {
+  position: fixed;
+  left: 37%;
+}
+
+#welcome form,
+#chat {
+  position: fixed;
+  top: 20%;
+  right: 10%;
+  width: 35%;
+  height: 65%;
+  border: 2px inset black;
+}
+
+#chatLog {
+  top: 10%;
+  width: 100%;
+  height: 90%;
+  overflow: auto;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #404040aa;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #808080a9;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+#chatLog li {
+  width: 90%;
+  list-style-type: "-  ";
+}
+
+#call h3 {
+  position: fixed;
+  width: 100%;
+  top: 10%;
+  text-align: center;
+}
+
+#myStream button {
+  width: 40%;
+  margin: 1%;
+  font-weight: 500;
+}
+
+.on {
+  background-color: rgb(102, 102, 209, 0.5);
+}
+
+.off {
+  background-color: rgb(196, 75, 75, 0.5);
+}
+
+video {
+  margin: 5px;
+}
+
+select {
+  width: 82%;
+  background-color: rgba(250, 235, 215, 0.71);
+}
+
+#chat form {
+  text-align: center;
+}
+
+#nickname input {
+  width: 80%;
+  background-color: rgba(250, 235, 215, 0.71);
+}
+
+#msg input {
+  width: 80%;
+  background: none;
+  border-top: 2px solid black;
+  border-left: none;
+  border-right: none;
+  border-bottom: 2px solid black;
+}
+
+#chat input:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  transition: background-color 0.2s ease-in-out;
+}
+
+#chat button {
+  width: 17%;
+  background: none;
+}
+
+#chat button:hover {
+  background-color: rgba(162, 169, 218, 0.4);
+  transition: background-color 0.1s ease-in-out;
+}

@@ -5,21 +5,35 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Noom
-        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
-    body 
+        link(rel="stylesheet", href="./public/css/main.css")
+    body
         header 
-            h1 Noom
+            h1 1 : 1 Private Call
         main
             div#welcome
                 form
+                    h3 New Room
                     input(placeholder="room name", required, type="text")
                     button Enter Room
+                div#roomList
+                    h3 Open Room List
+                    ul
             div#call
+                h3
+                div#chat
+                    form#nickname
+                        input(placeholder="Choose your nickname", required, type="text")
+                        button Save
+                    div#chatLog
+                        ul
+                    form#msg
+                        input(placeholder="write your message", required, type="text")
+                        button Send 
                 div#myStream
-                    video#myFace(autoplay, playsinline, width="400", height="400")
-                    button#mute Mute
-                    button#camera Turn Camera Off
+                    video#myFace(autoplay, playsinline, width="250", height="200")
+                    video#peerFace(autoplay, playsinline, width="250", height="200")
+                    button#mute.on Mike
+                    button#camera.on Camera
                     select#cameras
-                    video#peerFace(autoplay, playsinline, width="400", height="400")
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js") 
